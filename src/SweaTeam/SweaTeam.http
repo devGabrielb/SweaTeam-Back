@@ -1,0 +1,6 @@
+@SweaTeam_HostAddress = http://localhost:5120
+
+GET {{SweaTeam_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
