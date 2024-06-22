@@ -25,13 +25,13 @@ namespace SweaTeam.Features.Exercises
     public record GetExerciseListQuery : IRequest<Result<GetExerciseListResponse>>
     {
 
-        public GetExerciseListQuery(int? muscleGroupType, int page = 1, int pageSize = 10)
+        public GetExerciseListQuery(int muscleGroupType, int page = 1, int pageSize = 10)
         {
-            MuscleGroupType = muscleGroupType ?? 0;
+            MuscleGroupType = muscleGroupType;
             Page = page;
             PageSize = pageSize;
         }
-        public int? MuscleGroupType { get; init; }
+        public int MuscleGroupType { get; init; }
         public int Page { get; init; }
         public int PageSize { get; init; }
     }
@@ -44,7 +44,7 @@ namespace SweaTeam.Features.Exercises
         {
             RuleFor(x => x.Page).GreaterThan(0);
             RuleFor(x => x.PageSize).GreaterThan(0);
-            RuleFor(x => x.MuscleGroupType).NotEmpty();
+            RuleFor(x => x.MuscleGroupType).NotEmpty().GreaterThan(0);
         }
     }
     internal sealed class GetExerciseListHandler : IRequestHandler<GetExerciseListQuery, Result<GetExerciseListResponse>>
@@ -69,6 +69,7 @@ namespace SweaTeam.Features.Exercises
             }
 
             var exercises = await _context.Exercises
+                .Where(x => request.MuscleGroupType == 0 || (int)x.PrimaryMuscleGroup == request.MuscleGroupType)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken)
