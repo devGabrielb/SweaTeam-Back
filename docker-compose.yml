@@ -1,12 +1,24 @@
 # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
 
-version: '3.4'
+version: "3.4"
 
 services:
-  sweateam:
+  sweateam-api:
     image: sweateam
+    container_name: sweateam.Api
     build:
       context: .
       dockerfile: src/SweaTeam/Dockerfile
     ports:
       - 5120:5120
+  sweateam-db:
+    image: postgres:latest
+    container_name: sweateam.Db
+    environment:
+      - POSTGRES_DB=sweateam
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
